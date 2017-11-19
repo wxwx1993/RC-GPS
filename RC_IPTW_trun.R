@@ -1,5 +1,4 @@
-#For GPS method using IPTW, truncated lowest 1% and highest 1% GPS
-
+#For GPS method using IPTW, truncated GPS if wieghts is >10
 library(nnet)
 library("MASS")
 
