@@ -1,6 +1,9 @@
 library("designmatch")
+library("matrixStats")
+library("SDMTools")
 
 #########balance 
+#### generate data
 simulated.data<-data.generate(sample_size=2000,sd=20,phi=0.8,sd_rc=1,tau_par=0.8,beta_1=1,beta_par=1,correct_RC=1)
 validation<-simulated.data[sample.int(nrow(simulated.data),500),]
 RC.model2<-lm(treat~ treat.w  +cova1+cova2+cova3 , validation)
@@ -22,7 +25,7 @@ data$GPS0<-GPS_mod$fitted.values[,1]
 data$GPS1<-GPS_mod$fitted.values[,2]
 data$GPS2<-GPS_mod$fitted.values[,3]
 
-########balance subclass
+########subclass balance
 GPS0<-GPS_mod$fitted.values[,1]
 GPS1<-GPS_mod$fitted.values[,2]
 GPS2<-GPS_mod$fitted.values[,3]
@@ -86,9 +89,6 @@ subclass.balance<-function(GPSdataset=Y.GPS0,cf=1,cate=0){
 
 
 ############IPTW balance
-library("matrixStats")
-
-
 data.X2.trun<-data[which(data$treat.estimate.cat==2),]
 data.X2.trun$weight<-1/data.X2.trun$GPS2
 data.X1.trun<-data[which(data$treat.estimate.cat==1),]
@@ -99,9 +99,6 @@ data.X0.trun$weight<-1/data.X0.trun$GPS0
 data_weight<-rbind(data.X0.trun,data.X1.trun,data.X2.trun)
 data_weight[which(data_weight$weight>10),]$weight<-10
 
-library("matrixStats")
-library("SDMTools")
-
 IPTW.balance<-function(cf=1,cate=0){
   (wt.mean(subset(data_weight,treat.estimate.cat==cate)[,cf+3],subset(data_weight,treat.estimate.cat==cate)$weight)
   -wt.mean(subset(data_weight,treat.estimate.cat!=cate)[,cf+3],subset(data_weight,treat.estimate.cat!=cate)$weight))/
@@ -110,7 +107,7 @@ IPTW.balance<-function(cf=1,cate=0){
 }
 
 
-#######matching
+#######matching bbalance
 data.X2<-data[which(data$treat.estimate.cat==2),]
 data.X1<-data[which(data$treat.estimate.cat==1),]
 data.X0<-data[which(data$treat.estimate.cat==0),]
@@ -132,12 +129,13 @@ matching.balance<-function(cf=1,cate=0){
    ((sd(subset(matching.data,treat.estimate.cat==cate)[,cf+3])+sd(subset(matching.data,treat.estimate.cat!=cate)[,cf+3]))/2)
 }
 
+##########original data balance
 init.balance<-function(cf=1,cate=0){
   (mean(subset(QD_data_complete,treat.estimate.cat==cate)[,cf+3])-mean(subset(QD_data_complete,treat.estimate.cat!=cate)[,cf+3]))/
     ((sd(subset(QD_data_complete,treat.estimate.cat==cate)[,cf+3])+sd(subset(QD_data_complete,treat.estimate.cat==cate)[,cf+3]))/2)
 }
 
-
+############# calculation
 subclass.balance.0<-NULL
 subclass.balance.1<-NULL
 subclass.balance.2<-NULL
@@ -156,15 +154,6 @@ for (i in c(1:6)){
   IPTW.balance.2<-c( IPTW.balance.2,IPTW.balance(cf=i,cate=2))
 }
 
-init.balance.0<-NULL
-init.balance.1<-NULL
-init.balance.2<-NULL
-for (i in c(1:6)){
-  init.balance.0<-c( init.balance.0,init.balance(cf=i,cate=0))
-  init.balance.1<-c( init.balance.1,init.balance(cf=i,cate=1))
-  init.balance.2<-c( init.balance.2,init.balance(cf=i,cate=2))
-}
-
 
 matching.balance.0<-NULL
 matching.balance.1<-NULL
@@ -175,11 +164,20 @@ for (i in c(1:6)){
   matching.balance.2<-c( matching.balance.2,matching.balance(cf=i,cate=2))
 }
 
+init.balance.0<-NULL
+init.balance.1<-NULL
+init.balance.2<-NULL
+for (i in c(1:6)){
+  init.balance.0<-c( init.balance.0,init.balance(cf=i,cate=0))
+  init.balance.1<-c( init.balance.1,init.balance(cf=i,cate=1))
+  init.balance.2<-c( init.balance.2,init.balance(cf=i,cate=2))
+}
+
 order.0<-sort(abs(init.balance.0), index.return =T)$ix
 order.1<-sort(abs(init.balance.1), index.return =T)$ix
 order.2<-sort(abs(init.balance.2), index.return =T)$ix
 
-
+#############plot balance plot
 par(oma = c(4, 1, 1, 1))
 par(mfrow=c(1,3),las=1, mgp=c(3, 2, 0))
 histcolors = c(rgb(0,0,1,.8), rgb(0,1,0,.8),rgb(1,0,0,.8),rgb(0,0,0,.8))
