@@ -2,7 +2,6 @@ library(nnet)
 library("MASS")
 
 #function for generating simulated data, including both "true" and "error-prone" exposurs
-
 data.generate<-function(sample_size=2000,seed=300,sd=20,phi=0.8,sd_rc=1,tau_par=0.6,beta_1=1,beta_par=1,correct_RC=1){
   
   options(digits=4) # only print 4 sig digits
