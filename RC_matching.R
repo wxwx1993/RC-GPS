@@ -1,6 +1,5 @@
 #For GPS method using matching
 
-
 library(nnet)
 library("MASS")
 
