@@ -1,4 +1,4 @@
-# GPS_cate
+# RC-GPS
 data.generate.R includes the functions to generate simulated data for the various settings, include those seven settings presented in table 1.
 
 RC.adjust.10level.R includes the functions to conduct RC-GPS approach using subclassifcation with 10 levels of subclasses.
