@@ -3,7 +3,6 @@
 library(nnet)
 library("MASS")
 
-
 RC.adjust.10level<-function(treat.specfic=treat.estimate,data=imputation.data){
   data$treat.use<-treat.specfic
   if (length(table(data$treat.use))<3){return(c(NA,NA))}
