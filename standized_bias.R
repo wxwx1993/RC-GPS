@@ -2,6 +2,9 @@ library("designmatch")
 library("matrixStats")
 library("SDMTools")
 
+source("data.generate.R")
+setwd(paste(getwd(),"/Simulation_result", sep=""))
+
 #########balance 
 #### generate data
 simulated.data<-data.generate(sample_size=2000,sd=20,phi=0.8,sd_rc=1,tau_par=0.8,beta_1=1,beta_par=1,correct_RC=1)
@@ -131,8 +134,8 @@ matching.balance<-function(cf=1,cate=0){
 
 ##########original data balance
 init.balance<-function(cf=1,cate=0){
-  (mean(subset(QD_data_complete,treat.estimate.cat==cate)[,cf+3])-mean(subset(QD_data_complete,treat.estimate.cat!=cate)[,cf+3]))/
-    ((sd(subset(QD_data_complete,treat.estimate.cat==cate)[,cf+3])+sd(subset(QD_data_complete,treat.estimate.cat==cate)[,cf+3]))/2)
+  (mean(subset(data,treat.estimate.cat==cate)[,cf+3])-mean(subset(data,treat.estimate.cat!=cate)[,cf+3]))/
+    ((sd(subset(data,treat.estimate.cat==cate)[,cf+3])+sd(subset(data,treat.estimate.cat==cate)[,cf+3]))/2)
 }
 
 ############# calculation
@@ -178,6 +181,7 @@ order.1<-sort(abs(init.balance.1), index.return =T)$ix
 order.2<-sort(abs(init.balance.2), index.return =T)$ix
 
 #############plot balance plot
+pdf(paste0("balance_all.pdf"),width=20,height=8.5)
 par(oma = c(4, 1, 1, 1))
 par(mfrow=c(1,3),las=1, mgp=c(3, 2, 0))
 histcolors = c(rgb(0,0,1,.8), rgb(0,1,0,.8),rgb(1,0,0,.8),rgb(0,0,0,.8))
@@ -207,5 +211,5 @@ par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0.1, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
 legend("bottomleft", c("Subclass","IPTW","Matching","Original"), xpd = TRUE, horiz = TRUE, inset = c(0, 
         0.0), bty = "n", col=histcolors,lwd=c(10,10,10,10),lty=c(1,1,1,1), cex = 2)
-
+dev.off()
 

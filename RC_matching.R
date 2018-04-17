@@ -25,6 +25,8 @@ RC.matching<-function(treat.specfic=treat.estimate,data=simulated.data){
   }
 
   return(c(mean(E.Y1)-mean(E.Y0),mean(E.Y2)-mean(E.Y1)))
+  }
+  
 }
 
 regression.calibration.matching<-function(model=RC.model,simulated.data=simulated.data){
