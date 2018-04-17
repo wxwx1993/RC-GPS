@@ -1,12 +1,13 @@
 library("parallel")
 
+
 source（"data.generate.R")
 source（"RC_IPTW.R")
 source（"RC_subclassification.R")
 source（"RC_matching.R")
 
-setwd("~/Dropbox/PM2.5 Research/Simulation/More_simulation/Simulation_plot")
-
+dir.create(paste(getwd(),"/Simulation_plot", sep=""))
+setwd(paste(getwd(),"/Simulation_plot", sep=""))
 
 subclass.MSE.bias<-mclapply(1:7,subclass.10level.fun,mc.cores=7)
 
