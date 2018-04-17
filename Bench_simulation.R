@@ -1,8 +1,8 @@
 library("parallel")
 
 source（"data.generate.R")
-source（"RC_IPTW_trun.R")
-source（"RC.adjust.10level.R")
+source（"RC_IPTW.R")
+source（"RC_subclassification.R")
 source（"RC_matching.R")
 
 setwd("~/Dropbox/PM2.5 Research/Simulation/More_simulation/Simulation_plot")
