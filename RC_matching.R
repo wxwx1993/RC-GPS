@@ -3,6 +3,7 @@
 library(nnet)
 library("MASS")
 
+##################the function to implement matching approach
 RC.matching<-function(treat.specfic=treat.estimate,data=simulated.data){
   data$treat.use<-treat.specfic
   if (length(table(data$treat.use))<3){return(c(NA,NA))}
@@ -29,6 +30,7 @@ RC.matching<-function(treat.specfic=treat.estimate,data=simulated.data){
   
 }
 
+################################use RC model to calibrate exposures, and implement RC.matching on calibrated exposure.
 regression.calibration.matching<-function(model=RC.model,simulated.data=simulated.data){
   imputation.data<-simulated.data
   imputation.data$treat.estimate<-predict(model,simulated.data)
@@ -43,6 +45,8 @@ regression.calibration.matching<-function(model=RC.model,simulated.data=simulate
               c(1)))
  }
 
+############function to simulate 7 scenarios to vary e.g. the strength of confounders, the variances, specification of RC model.
+############output are bias and MSE to assess the performance of RC-GPS under different scenarios
 matching.fun<-function(scenarios=1){
   
   match.result1<-matrix(NA,ncol=2,nrow=1000)
