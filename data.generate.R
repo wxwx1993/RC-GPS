@@ -69,6 +69,8 @@ summary(lm(treat~ treat.w  +cova1+cova2+cova3 , simulated.data))
 #cor(simulated.data$treat.w,rowSums(simulated.data[,4:9]*0.6*c(1,1,2,1.5,3,2,3)))
 table(simulated.data$treat.cat,simulated.data$treat.w.cat)
 
+
+##################function for generating simulated data to pretend we have a misspecified terms in RC model.
 data.generate.miss<-function(sample_size=2000,seed=300,sd=20,phi=1,sd_rc=5,gam_par=0.6,zeta_par=1,beta_par=1){
   
   options(digits=4) # only print 4 sig digits
