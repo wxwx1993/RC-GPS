@@ -3,6 +3,7 @@
 library(nnet)
 library("MASS")
 
+##################the function to implement subclassfication approach
 RC.adjust.10level<-function(treat.specfic=treat.estimate,data=imputation.data){
   data$treat.use<-treat.specfic
   if (length(table(data$treat.use))<3){return(c(NA,NA))}
@@ -91,6 +92,7 @@ RC.adjust.10level<-function(treat.specfic=treat.estimate,data=imputation.data){
   }
 }
 
+################################use RC model to calibrate exposures, and implement RC.subclass on calibrated exposure.
 regression.calibration.10level<-function(model=RC.model,simulated.data=simulated.data){
   imputation.data<-simulated.data
   imputation.data$treat.estimate<-predict(model,simulated.data)
@@ -105,7 +107,8 @@ regression.calibration.10level<-function(model=RC.model,simulated.data=simulated
               c(1)))
 }
 
-
+############function to simulate 7 scenarios to vary e.g. the strength of confounders, the variances, specification of RC model.
+############output are bias and MSE to assess the performance of RC-GPS under different scenarios
 subclass.10level.fun<-function(scenarios=1){
   
 sub.result1<-matrix(NA,ncol=2,nrow=1000)
