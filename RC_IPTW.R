@@ -2,6 +2,7 @@
 library(nnet)
 library("MASS")
 
+##################the function to implement IPTW approach
 RC.IPTW.trun<-function(treat.specfic=treat.estimate,data=simulated.data){
   data$treat.use<-treat.specfic
   if (length(table(data$treat.use))<3){return(c(NA,NA))}
@@ -28,6 +29,7 @@ RC.IPTW.trun<-function(treat.specfic=treat.estimate,data=simulated.data){
   return(c(E.Y1-E.Y0,E.Y2-E.Y1))
 }
 
+################################use RC model to calibrate exposures, and implement RC.IPTW on calibrated exposure.
 regression.calibration.IPTW.trun<-function(model=RC.model,simulated.data=simulated.data){
   imputation.data<-simulated.data
   imputation.data$treat.estimate<-predict(model,simulated.data)
@@ -42,6 +44,8 @@ regression.calibration.IPTW.trun<-function(model=RC.model,simulated.data=simulat
               c(1)))
 }
 
+############function to simulate 7 scenarios to vary e.g. the strength of confounders, the variances, specification of RC model.
+############output are bias and MSE to assess the performance of RC-GPS under different scenarios
 IPTW.trun1.fun<-function(scenarios=1){
 
 IPTW.result1<-matrix(NA,ncol=2,nrow=1000)
