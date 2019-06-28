@@ -3,7 +3,7 @@ source("data.generate.R")
 setwd(paste(getwd(),"/Simulation_result", sep=""))
 
 #########generate data
-simulated.data<-data.generate(sample_size=2000,sd=20,phi=0.8,sd_rc=1,tau_par=0.8,beta_1=1,beta_par=1,correct_RC=1)
+simulated.data<-eval(parse(text=paste0("data.generate(sample_size=2000,seed = i,",text,")")))
 validation<-simulated.data[sample.int(nrow(simulated.data),500),]
 RC.model2<-lm(treat~ treat.w  +cova1+cova2+cova3 , validation)
 
@@ -48,7 +48,7 @@ with(subset(data,treat.cat==0), hist(GPS2, col = histcolors[1], breaks=seq(0,1,0
 par(new=TRUE)
 with(subset(data,treat.cat==1), hist(GPS2, col = histcolors[2], breaks=seq(0,1,0.03), xlim = c(0,1), axes=FALSE, ylab = "", xlab = "", main = ""))
 par(new=TRUE)
-with(subset(data,treat.cat==2), hist(GPS2, col = histcolors[3], breaks=seq(0,1,0.03), xlim = c(0,1), axes=FALSE, ylab = "", xlab = "", main = ""))
+with(subset(data,treat.cat==2), hist(GPS2, col = histcolors[3], breaks=seq(0,1.02,0.03), xlim = c(0,1), axes=FALSE, ylab = "", xlab = "", main = ""))
 legend("topright",c(expression(X["c"]==1),expression(X["c"]==2),expression(X["c"]==3)),col=histcolors,lwd=c(10,10,10),lty=c(1,1,1),cex=2)
 dev.off()
 

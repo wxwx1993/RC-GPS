@@ -14,7 +14,7 @@ data.generate<-function(sample_size=2000,seed=300,sd=20,phi=0.8,sd_rc=1,tau_par=
   cf4<-rchisq(size,1)
   cf<-cbind(cf0=1,cf1,cf2,cf3,cf4)
   #coefficients of linear regression model
-  tau<-tau_par*c(1,1,2,1.5,3,2,3) 
+  tau<-(tau_par*c(1,1,2,1.5,3,2,3))
   
   # covariates in the RC model
   cova1<-cf1[,1]
@@ -41,6 +41,8 @@ data.generate<-function(sample_size=2000,seed=300,sd=20,phi=0.8,sd_rc=1,tau_par=
   for (i in 1:size){
     Y[i]<-sum(c(treat[i],cf[i,-1])*beta) +rnorm(1, mean = 0, sd = 1)
   }
+  #treat<-treat/10
+  #treat.w<-treat.w/10
   treat.cat<-as.numeric()
   for (i in 1:size){
     if (treat[i]>15){treat.cat[i]<-2}
@@ -53,16 +55,32 @@ data.generate<-function(sample_size=2000,seed=300,sd=20,phi=0.8,sd_rc=1,tau_par=
     else if (treat.w[i]<=15 & treat.w[i]>-5){treat.w.cat[i]<-1}
     else if (treat.w[i]<=-5){treat.w.cat[i]<-0}
   }
+  
+  #treat<-treat
+  #treat.w<-treat.w+100
+
   simulated.data<-data.frame(cbind(Y,treat,treat.cat,cf[,-1],cova,treat.w,treat.w.cat))
   colnames(simulated.data)[4:9]<-c("cf1","cf2","cf3","cf4","cf5","cf6")
   return(simulated.data)
 }
 
 
-simulated.data<-data.generate(sample_size=10000,phi=0.8,sd_rc=1,tau_par=0.8,beta_1=1,beta_par=1,correct_RC=1)
+simulated.data<-data.generate(sample_size=2000,phi=0.8,sd_rc=1,tau_par=0.8,beta_1=1,beta_par=1,correct_RC=0)
 var(simulated.data$treat)
 var(simulated.data$treat.w)
 cor(simulated.data$treat,simulated.data$treat.w)
+
+pdf("differentXW.pdf",width=14,height=8.5,paper='special')   
+par(mfrow=c(1,1))
+histcolors = c(rgb(0,0,1,.2), rgb(1,0,0,.2))
+with(simulated.data, hist(treat.w, col = histcolors[2], breaks=10,xlim=c(0,350) ,axes=T, xaxt='n', xlab = "", ylab = "", main = "",freq=F,cex.main=2.5,cex.axis=2.5))
+axis(side=1, at=seq(0,400, 50), labels=seq(0,400, 50),cex.axis=2.5)
+#par(new=TRUE)
+with(simulated.data, hist(treat, col = histcolors[1], breaks=25, axes=F, ylab = "", xlab = "",main="",freq=F,add=T))
+#axis(side = 4)
+#mtext(side = 4, line = 3, "Number of units")
+legend("topright",c("error free","error prone"),col=histcolors,lwd=c(10,10),lty=c(1,1),cex=2)
+dev.off()
 
 summary(lm(treat~ treat.w  +cova1+cova2+cova3 , simulated.data))
 

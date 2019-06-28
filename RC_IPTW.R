@@ -7,30 +7,30 @@ RC.IPTW.trun<-function(treat.specfic=treat.estimate,data=simulated.data){
   data$treat.use<-treat.specfic
   if (length(table(data$treat.use))<3){return(c(NA,NA))}
   else{
-  GPS_mod<-multinom(treat.use ~ cf1+cf2+cf3+cf4+cf5+cf6 , data)
-  #GPS_mod
-  data$GPS0<-GPS_mod$fitted.values[,1]
-  data$GPS1<-GPS_mod$fitted.values[,2]
-  data$GPS2<-GPS_mod$fitted.values[,3]
-
-
-  data.X2<-data[which(data$treat.use==2),]
-  data.X1<-data[which(data$treat.use==1),]
-  data.X0<-data[which(data$treat.use==0),]
-  
-  if (sum(data.X2$GPS2<0.1)>0){data.X2[which(data.X2$GPS2<0.1),]$GPS2<-0.1}
-  if (sum(data.X1$GPS1<0.1)>0){data.X1[which(data.X1$GPS1<0.1),]$GPS1<-0.1}
-  if (sum(data.X0$GPS0<0.1)>0){data.X0[which(data.X0$GPS0<0.1),]$GPS0<-0.1}
-  
-  E.Y2<-sum(data.X2$Y*(1/data.X2$GPS2))/nrow(data)
-  E.Y1<-sum(data.X1$Y*(1/data.X1$GPS1))/nrow(data)
-  E.Y0<-sum(data.X0$Y*(1/data.X0$GPS0))/nrow(data)
+    GPS_mod<-multinom(treat.use ~ cf1+cf2+cf3+cf4+cf5+cf6 , data)
+    #GPS_mod
+    data$GPS0<-GPS_mod$fitted.values[,1]
+    data$GPS1<-GPS_mod$fitted.values[,2]
+    data$GPS2<-GPS_mod$fitted.values[,3]
+    
+    
+    data.X2<-data[which(data$treat.use==2),]
+    data.X1<-data[which(data$treat.use==1),]
+    data.X0<-data[which(data$treat.use==0),]
+    
+    if (sum(data.X2$GPS2<0.1)>0){data.X2[which(data.X2$GPS2<0.1),]$GPS2<-0.1}
+    if (sum(data.X1$GPS1<0.1)>0){data.X1[which(data.X1$GPS1<0.1),]$GPS1<-0.1}
+    if (sum(data.X0$GPS0<0.1)>0){data.X0[which(data.X0$GPS0<0.1),]$GPS0<-0.1}
+    
+    E.Y2<-sum(data.X2$Y*(1/data.X2$GPS2))/nrow(data)
+    E.Y1<-sum(data.X1$Y*(1/data.X1$GPS1))/nrow(data)
+    E.Y0<-sum(data.X0$Y*(1/data.X0$GPS0))/nrow(data)
   }
   return(c(E.Y1-E.Y0,E.Y2-E.Y1))
 }
 
 ################################use RC model to calibrate exposures, and implement RC.IPTW on calibrated exposure.
-regression.calibration.IPTW.trun<-function(model=RC.model,simulated.data=simulated.data){
+regression.calibration.IPTW.trun<-function(model=RC.model,simulated.data=simulated.data, trim = RC.IPTW.trun,trim_cutoff=0.1){
   imputation.data<-simulated.data
   imputation.data$treat.estimate<-predict(model,simulated.data)
   treat.estimate.cat<-as.numeric()
@@ -40,7 +40,7 @@ regression.calibration.IPTW.trun<-function(model=RC.model,simulated.data=simulat
     else if (imputation.data$treat.estimate[i]<=(-5)){treat.estimate.cat[i]<-0}
   }
   imputation.data$treat.estimate.cat<-treat.estimate.cat
-  return(list(RC.IPTW.trun(treat.specfic=imputation.data$treat.estimate.cat,data=imputation.data),
+  return(list(trim(treat.specfic=imputation.data$treat.estimate.cat,data=imputation.data,trim_cutoff=trim_cutoff),
               c(1)))
 }
 

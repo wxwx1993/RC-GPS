@@ -18,6 +18,8 @@ IPTW.MSE.bias<-mclapply(1:7,IPTW.trun1.fun,mc.cores=7)
 
 matching.MSE.bias<-mclapply(1:7,matching.fun,mc.cores=7)
 
-save(subclass.MSE.bias,matching.MSE.bias,matching.MSE.bias,file="RC_GPS.MSE.bias.RData")
+save(subclass.MSE.bias,IPTW.MSE.bias,matching.MSE.bias,file="RC_GPS.MSE.bias.RData")
 
-
+#matching.fun(3)
+#subclass.10level.fun(3)
+#IPTW.trun1.fun(3)

@@ -8,24 +8,25 @@ RC.matching<-function(treat.specfic=treat.estimate,data=simulated.data){
   data$treat.use<-treat.specfic
   if (length(table(data$treat.use))<3){return(c(NA,NA))}
   else{
-  GPS_mod<-multinom(treat.use ~ cf1+cf2+cf3+cf4+cf5+cf6 , data)
-  #GPS_mod
-  data$GPS0<-GPS_mod$fitted.values[,1]
-  data$GPS1<-GPS_mod$fitted.values[,2]
-  data$GPS2<-GPS_mod$fitted.values[,3]
-  
-  data.X2<-data[which(data$treat.use==2),]
-  data.X1<-data[which(data$treat.use==1),]
-  data.X0<-data[which(data$treat.use==0),]
-  
-  E.Y0<-NULL;E.Y1<-NULL;E.Y2<-NULL
-  for (i in 1:2000){
-    E.Y0[i]<-data.X0[which.min(abs(data.X0$GPS0-data$GPS0[i])),1]
-    E.Y1[i]<-data.X1[which.min(abs(data.X1$GPS1-data$GPS1[i])),1]
-    E.Y2[i]<-data.X2[which.min(abs(data.X2$GPS2-data$GPS2[i])),1]
-  }
-
-  return(c(mean(E.Y1)-mean(E.Y0),mean(E.Y2)-mean(E.Y1)))
+    GPS_mod<-multinom(treat.use ~ cf1+cf2+cf3+cf4+cf5+cf6 , data)
+    #GPS_mod
+    data$GPS0<-GPS_mod$fitted.values[,1]
+    data$GPS1<-GPS_mod$fitted.values[,2]
+    data$GPS2<-GPS_mod$fitted.values[,3]
+    
+    data.X2<-data[which(data$treat.use==2),]
+    data.X1<-data[which(data$treat.use==1),]
+    data.X0<-data[which(data$treat.use==0),]
+    
+    
+    E.Y0<-NULL;E.Y1<-NULL;E.Y2<-NULL
+    for (i in 1:nrow(data)){
+      E.Y0[i]<-data.X0[which.min(abs(data.X0$GPS0-data$GPS0[i])),1]
+      E.Y1[i]<-data.X1[which.min(abs(data.X1$GPS1-data$GPS1[i])),1]
+      E.Y2[i]<-data.X2[which.min(abs(data.X2$GPS2-data$GPS2[i])),1]
+    }
+    
+    return(c(mean(E.Y1)-mean(E.Y0),mean(E.Y2)-mean(E.Y1)))
   }
   
 }
